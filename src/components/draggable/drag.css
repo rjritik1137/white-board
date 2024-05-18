@@ -1,0 +1,11 @@
+.draggable {
+  /* background-color: lightblue; */
+  position: absolute; /* Required for moving the element */
+  cursor: move; /* Optional: changes cursor to move icon */
+  user-select: none; /* Prevent text selection while dragging */
+}
+
+.draggable .dragIcon {
+  border-radius: 10px;
+  background-color: rgb(177, 249, 246);
+}
