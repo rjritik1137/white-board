@@ -1,7 +1,8 @@
 import { KeyboardEventHandler, useRef, useState } from 'react'
-import { getEqualityPredicate, getNumber, isNumber } from '../../util/number'
-import './array.css'
+import { getEqualityPredicate } from '../../util/number'
 import Draggable from '../draggable/Draggable'
+import './array.css'
+import InputElement from '../input/InputElement'
 const ArrayRenderer = ({ array: _array }: { array: any }) => {
   const [selectedIndices, setSelectedIndices] = useState<number[]>([])
   const [array, setArray] = useState(_array)
@@ -23,25 +24,26 @@ const ArrayRenderer = ({ array: _array }: { array: any }) => {
       return newIndices
     })
   }
+  const setValueAtIndex = (value: string, index: number) => {
+    setArray((prev: any) => {
+      const newArray = [...prev]
+      newArray[index] = value
+      return newArray
+    })
+  }
   const handleItemClick = (index: number) => {
     // updateSelectedIndices(index, index)
   }
 
   const handleAddItem = () => {
-    if (isNumber(inputValue)) {
-      const newArray = [...array, getNumber(inputValue)]
-      setInputValue('')
-      setArray(newArray)
-    }
+    const newArray = [...array, inputValue]
+    setInputValue('')
+    setArray(newArray)
   }
 
   const handleInsertItem = () => {
-    if (
-      isNumber(inputValue) &&
-      selectedIndices.length >= 0 &&
-      selectedIndices <= array.length
-    ) {
-      const newArray = [...array, getNumber(inputValue)]
+    if (selectedIndices.length >= 0 && selectedIndices <= array.length) {
+      const newArray = [...array, inputValue]
       setInputValue('')
       setArray(newArray)
     }
@@ -62,12 +64,10 @@ const ArrayRenderer = ({ array: _array }: { array: any }) => {
 
   const handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Enter') {
-      if (isNumber(inputValue)) {
-        if (selectedIndices.length > 0) {
-          handleInsertItem()
-        } else {
-          handleAddItem()
-        }
+      if (selectedIndices.length > 0) {
+        handleInsertItem()
+      } else {
+        handleAddItem()
       }
     }
   }
@@ -92,24 +92,32 @@ const ArrayRenderer = ({ array: _array }: { array: any }) => {
       <Draggable>
         <div className="array" onMouseUp={handleItemMouseUp} ref={containerRef}>
           {array.map((item: any, index: number) => (
-            <div
-              key={index}
-              className={`array-item ${
-                selectedIndices.some((i) => i === index) ? 'selected' : ''
-              }`}
-              onClick={() => handleItemClick(index)}
-              onMouseDown={(e) => {
-                e.stopPropagation()
-                handleItemMouseDown(index)
-              }}
-              onMouseEnter={(e) => {
-                e.stopPropagation()
-                handleItemMouseEnter(index)
-              }}
-            >
-              <span className="item">{index}</span>
-              <span className="item">{item}</span>
-            </div>
+            // <div
+            //   key={index}
+            //   className={`array-item ${
+            //     selectedIndices.some((i) => i === index) ? 'selected' : ''
+            //   }`}
+            //   onClick={() => handleItemClick(index)}
+            //   onMouseDown={(e) => {
+            //     e.stopPropagation()
+            //     handleItemMouseDown(index)
+            //   }}
+            //   onMouseEnter={(e) => {
+            //     e.stopPropagation()
+            //     handleItemMouseEnter(index)
+            //   }}
+            // >
+            //   <span className="item">i = {index}</span>
+            //   <span className="item">{item}</span>
+            // </div>
+            <InputElement
+              onClick={handleItemClick}
+              handleItemMouseDown={handleItemMouseDown}
+              handleItemMouseEnter={handleItemMouseEnter}
+              value={item}
+              index={index}
+              isSelected={selectedIndices.some((i) => i === index)}
+            />
           ))}
         </div>
       </Draggable>
@@ -125,9 +133,9 @@ const ArrayRenderer = ({ array: _array }: { array: any }) => {
           <button className="element-button" onClick={handleAddItem}>
             Add Element
           </button>
-          <button className="element-button" onClick={handleInsertItem}>
+          {/* <button className="element-button" onClick={handleInsertItem}>
             Insert Element
-          </button>
+          </button> */}
           <button className="element-button" onClick={handleRemoveItem}>
             Remove Element
           </button>

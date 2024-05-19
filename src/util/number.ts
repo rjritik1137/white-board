@@ -5,8 +5,9 @@ export const isNumber = (inputValue: string | number) => {
   return inputValue.trim() !== '' && !isNaN(Number(inputValue.trim()))
 }
 
-export const getNumber = (inputValue: string | number): number => {
-  return Number(inputValue)
+export const getNumber = (inputValue: string | number) => {
+  return inputValue
+  //   return Number(inputValue)
 }
 
 export const getEqualityPredicate = <T>(inputValue: T) => {
